@@ -17,6 +17,12 @@ export class AppComponent {
   title = 'test-case-management-system';
   dropdownOpen = false;
 
+  ngOnInit() {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('isUserLoggedIn', String(this.isUserLoggedIn));
+    }
+  }
+
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
   }

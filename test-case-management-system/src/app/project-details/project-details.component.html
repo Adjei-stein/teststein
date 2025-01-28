@@ -20,7 +20,7 @@
             <div class="flex gap-4 mb-4">
                 <div class="mb-4 mx-2 flex flex-col">
                     <mat-label class='px-4'>Application Type</mat-label>
-                    <mat-form-field appearance="fill" class="custom-form-field">
+                    <mat-form-field appearance="outline" class="custom-form-field">
                         <mat-select>
                             <mat-option value="one">First option</mat-option>
                             <mat-option value="two">Second option</mat-option>
@@ -96,6 +96,17 @@
                     (matChipInputTokenEnd)="add($event)"
                     />
                 </mat-chip-grid>
+            </div>
+            <div class="mx-2">
+                <ng-multiselect-dropdown
+                    [placeholder]="'custom placeholder'"
+                    [settings]="dropdownSettings"
+                    [data]="dropdownList"
+                    [(ngModel)]="selectedItems"
+                    (onSelect)="onItemSelect($event)"
+                    (onSelectAll)="onSelectAll($event)"
+                    >
+                </ng-multiselect-dropdown>
             </div>
         </form>
             
