@@ -1,7 +1,8 @@
-
-
-::ng-deep .mat-mdc-text-field-wrapper {
-    background-color: #fff;
-    border: 0px 0px 1px 0px solid #000;
-    border-style: none;
+// Let the chips and the text input wrap together inside the bordered box.
+:host ::ng-deep .stakeholder-grid .mdc-evolution-chip-set__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
 }

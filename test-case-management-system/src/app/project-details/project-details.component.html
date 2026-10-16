@@ -1,114 +1,130 @@
-<div class="m-4 flex items-center justify-center">
-    <div class="bg-white w-full h-full border-none rounded-lg shadow-2xl p-8">
-        <form>
-            <div class="flex gap-4 mb-4">
-                <div class="mb-4 mx-2 w-[80%]">
-                    <mat-label class='px-4'>Project Name</mat-label>
-                    <!-- <label for="firstname" class="block text-gray-700 text-sm font-bold mb-2">First name</label> -->
-                    <input type="text" id="projectname" placeholder="Project name" class="border-b w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none">
-                    <!-- <input type="text" id="firstname" placeholder="First name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"> -->
-                </div>
-                <div class="mb-4 mx-2 w-[20%]">
-                    <mat-label class='px-4'>Project ID</mat-label>
-                    <input type="text" id="projectid" value="PX-383" readonly placeholder="" class="border-b w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none">
-                </div>
-            </div>
-            <div class="w-full mb-4 mx-2">
-                <mat-label class='px-4'>Project Description</mat-label>
-                <textarea id="projectdescription" placeholder="Project description" rows="4" class="border-b w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none"></textarea>
-            </div>
-            <div class="flex gap-4 mb-4">
-                <div class="mb-4 mx-2 flex flex-col">
-                    <mat-label class='px-4'>Application Type</mat-label>
-                    <mat-form-field appearance="outline" class="custom-form-field">
-                        <mat-select>
-                            <mat-option value="one">First option</mat-option>
-                            <mat-option value="two">Second option</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <div class="mb-4 mx-2 flex flex-col">
-                    <mat-label class='px-4'>Environment</mat-label>
-                    <mat-form-field appearance="outline">
-                        <mat-select>
-                            <mat-option value="one">First option</mat-option>
-                            <mat-option value="two">Second option</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                
-                <!-- <div class="mb-4 mx-2 flex flex-col">
-                    <mat-label>Choose a date</mat-label>
-                    <div class="col-12">
-                        <div class="input-group">
-                            <input
-                                class="form-control"
-                                placeholder="dd/mm/yyyy"
-                                name="d2"
-                                [(ngModel)]="model2"
-                                ngbDatepicker
-                                #d2="ngbDatepicker"
-                            />
-                            <button class="btn btn-outline-secondary bi bi-calendar3" type="button"></button>
-                        </div>
-                    </div>
-                </div> -->
-                <div class="mb-4 mx-2 flex flex-col">
-                    <mat-label class='px-4'>Application Type</mat-label>
-                    <mat-form-field appearance="outline">
-                        <mat-select>
-                            <mat-option value="one">First option</mat-option>
-                            <mat-option value="two">Second option</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <div class="mb-4 mx-2">
-                    <mat-label class='px-4'>Start Date</mat-label>
-                    <input type="date" id="startdate" placeholder="" class="border w-full py-4 px-4 leading-tight focus:outline-none rounded border-slate-950">
-                </div>
-                <div class="mb-4 mx-2">
-                    <mat-label class='px-4'>End Date</mat-label>
-                    <input type="date" id="enddate" placeholder="" class="border w-full py-4 px-4 leading-tight focus:outline-none rounded border-slate-950">
-                </div>
-            </div>
-            <div class="mx-2">
-                <mat-label class='px-4'>Stakeholders</mat-label>
-                <mat-chip-grid #chipGrid aria-label="Enter Email" class="border-b p-4">
-                    @for (email of emails(); track email) {
-                    <mat-chip-row
-                        (removed)="remove(email)"
-                        [editable]="true"
-                        (edited)="edit(email, $event)"
-                        [aria-description]="'press enter to edit ' + email.name"
-                    >
-                        {{email.name}}
-                        <button matChipRemove [attr.aria-label]="'remove ' + email.name">
-                        <mat-icon>cancel</mat-icon>
-                        </button>
-                    </mat-chip-row>
-                    }
-                    <input
-                    class="p-4 outline-none"
-                    placeholder="Enter Email"
-                    [matChipInputFor]="chipGrid"
-                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                    [matChipInputAddOnBlur]="addOnBlur"
-                    (matChipInputTokenEnd)="add($event)"
-                    />
-                </mat-chip-grid>
-            </div>
-            <div class="mx-2">
-                <ng-multiselect-dropdown
-                    [placeholder]="'custom placeholder'"
-                    [settings]="dropdownSettings"
-                    [data]="dropdownList"
-                    [(ngModel)]="selectedItems"
-                    (onSelect)="onItemSelect($event)"
-                    (onSelectAll)="onSelectAll($event)"
-                    >
-                </ng-multiselect-dropdown>
-            </div>
-        </form>
-            
+<nav class="mb-4 flex items-center gap-1 text-sm text-slate-500" aria-label="Breadcrumb">
+  <a routerLink="/projects" class="hover:text-slate-900">Projects</a>
+  <mat-icon class="icon-16 text-slate-400">chevron_right</mat-icon>
+  <span class="text-slate-900">{{ isNew() ? 'New project' : form.controls.name.value }}</span>
+</nav>
+
+@if (notFound()) {
+  <div class="card flex flex-col items-center px-6 py-16 text-center">
+    <mat-icon class="icon-24 text-slate-400">folder_off</mat-icon>
+    <h1 class="mt-2 text-base font-semibold text-slate-900">Project not found</h1>
+    <p class="mt-1 text-sm text-slate-500">It may have been deleted, or the link is wrong.</p>
+    <a routerLink="/projects" class="btn btn-secondary mt-6">Back to projects</a>
+  </div>
+} @else {
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight text-slate-900">{{ isNew() ? 'New project' : 'Project details' }}</h1>
+      <p class="mt-1 text-sm text-slate-500">
+        {{ isNew() ? 'Set up a project to start organising test cases and runs.' : 'Update this project’s details.' }}
+      </p>
     </div>
-</div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="mt-6 space-y-6" novalidate>
+    <!-- General -->
+    <section class="card grid gap-6 p-6 lg:grid-cols-3">
+      <div>
+        <h2 class="text-base font-semibold text-slate-900">General</h2>
+        <p class="mt-1 text-sm text-slate-500">What this project is and how it's identified.</p>
+      </div>
+      <div class="grid gap-5 sm:grid-cols-4 lg:col-span-2">
+        <div class="sm:col-span-3">
+          <label for="name" class="field-label">Project name</label>
+          <input id="name" type="text" formControlName="name" placeholder="e.g. ShopInn Mobile App"
+            class="field-input" [class.is-invalid]="showError('name')" />
+          @if (showError('name')) {
+            <p class="field-error">Give the project a name.</p>
+          }
+        </div>
+        <div>
+          <label for="key" class="field-label">Project ID</label>
+          <input id="key" type="text" formControlName="key" class="field-input font-mono" />
+        </div>
+        <div class="sm:col-span-4">
+          <label for="description" class="field-label">Description <span class="font-normal text-slate-400">(optional)</span></label>
+          <textarea id="description" formControlName="description" rows="4" placeholder="What's being tested, scope, and any useful links."
+            class="field-input h-auto py-2"></textarea>
+          <p class="field-hint">{{ form.controls.description.value.length }}/500</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Setup -->
+    <section class="card grid gap-6 p-6 lg:grid-cols-3">
+      <div>
+        <h2 class="text-base font-semibold text-slate-900">Setup</h2>
+        <p class="mt-1 text-sm text-slate-500">Where it runs and when.</p>
+      </div>
+      <div class="grid gap-5 sm:grid-cols-2 lg:col-span-2">
+        <div>
+          <label for="appType" class="field-label">Application type</label>
+          <select id="appType" formControlName="appType" class="field-input" [class.is-invalid]="showError('appType')">
+            <option value="" disabled>Select a type</option>
+            @for (type of appTypes; track type) { <option [value]="type">{{ type }}</option> }
+          </select>
+          @if (showError('appType')) { <p class="field-error">Choose an application type.</p> }
+        </div>
+        <div>
+          <label for="environment" class="field-label">Environment</label>
+          <select id="environment" formControlName="environment" class="field-input" [class.is-invalid]="showError('environment')">
+            <option value="" disabled>Select an environment</option>
+            @for (env of environments; track env) { <option [value]="env">{{ env }}</option> }
+          </select>
+          @if (showError('environment')) { <p class="field-error">Choose an environment.</p> }
+        </div>
+        <div>
+          <label for="startDate" class="field-label">Start date</label>
+          <input id="startDate" type="date" formControlName="startDate" class="field-input" [class.is-invalid]="showError('startDate')" />
+          @if (showError('startDate')) { <p class="field-error">Pick a start date.</p> }
+        </div>
+        <div>
+          <label for="endDate" class="field-label">End date <span class="font-normal text-slate-400">(optional)</span></label>
+          <input id="endDate" type="date" formControlName="endDate" class="field-input"
+            [class.is-invalid]="form.hasError('endBeforeStart')" [min]="form.controls.startDate.value" />
+          @if (form.hasError('endBeforeStart')) { <p class="field-error">End date can't be before the start date.</p> }
+        </div>
+      </div>
+    </section>
+
+    <!-- People -->
+    <section class="card grid gap-6 p-6 lg:grid-cols-3">
+      <div>
+        <h2 class="text-base font-semibold text-slate-900">Stakeholders</h2>
+        <p class="mt-1 text-sm text-slate-500">People who receive run reports for this project.</p>
+      </div>
+      <div class="lg:col-span-2">
+        <label for="stakeholders" class="field-label">Email addresses</label>
+        <mat-chip-grid #chipGrid aria-label="Stakeholder emails"
+          class="stakeholder-grid min-h-10 rounded-lg border border-slate-300 bg-white px-2 py-1 shadow-sm focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/10">
+          @for (email of stakeholders(); track email) {
+            <mat-chip-row (removed)="removeStakeholder(email)" [editable]="true" (edited)="editStakeholder(email, $event)"
+              [aria-description]="'press enter to edit ' + email">
+              {{ email }}
+              <button matChipRemove [attr.aria-label]="'Remove ' + email">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          }
+          <input id="stakeholders" class="min-w-[12rem] flex-1 border-0 bg-transparent py-1.5 text-sm outline-none placeholder:text-slate-400"
+            placeholder="name@company.com"
+            [matChipInputFor]="chipGrid"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            [matChipInputAddOnBlur]="true"
+            (matChipInputTokenEnd)="addStakeholder($event)" />
+        </mat-chip-grid>
+        @if (stakeholderError()) {
+          <p class="field-error">{{ stakeholderError() }}</p>
+        } @else {
+          <p class="field-hint">Press Enter or comma after each address.</p>
+        }
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="sticky bottom-0 -mx-4 flex justify-end gap-3 border-t border-slate-200 bg-canvas/90 px-4 py-4 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      <a routerLink="/projects" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary">{{ isNew() ? 'Create project' : 'Save changes' }}</button>
+    </div>
+  </form>
+}

@@ -1,48 +1,72 @@
-<div class="w-full h-screen flex flex-col lg:flex-row">
-    <div class="w-full hidden lg:flex items-center justify-center bg-white">
-        <img src="/images/teststein-high-resolution-logo-transparent-moto.png" alt="logo" class="h-[20rem] w-auto"/>
+<div class="flex min-h-screen bg-white">
+  <!-- Brand panel -->
+  <aside class="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-brand p-12 text-white lg:flex">
+    <img src="/images/teststein-high-resolution-logo-transparent-name-side.png" alt="Teststein" class="h-9 w-auto self-start brightness-0 invert" />
+
+    <div class="max-w-md">
+      <h1 class="text-4xl font-semibold leading-tight tracking-tight">Plan, run and track every test in one place.</h1>
+      <ul class="mt-8 space-y-4 text-slate-300">
+        <li class="flex items-start gap-3">
+          <mat-icon class="icon-20 mt-0.5 text-white">folder</mat-icon>
+          Organise test cases by project, environment and application type.
+        </li>
+        <li class="flex items-start gap-3">
+          <mat-icon class="icon-20 mt-0.5 text-white">play_circle</mat-icon>
+          Execute test runs and record results as you go.
+        </li>
+        <li class="flex items-start gap-3">
+          <mat-icon class="icon-20 mt-0.5 text-white">insights</mat-icon>
+          See pass rates and failures across every project at a glance.
+        </li>
+      </ul>
     </div>
-    <div class="w-full h-full flex items-center justify-center bg-slate-100">
-        <div class="lg:w-[60%] lg:h-[70%] h-full w-full bg-black lg:rounded-md flex items-center justify-center">
-            <div class="flex items-center justify-center flex-col">
-                <div class="w-full lg:hidden flex items-center justify-center h-48 mb-6">
-                    <img src="/images/output-onlinepngtools.png" alt="logo" class="h-48 w-auto"/>
-                </div>
-                <div class="p-8">
-                    <h2 class="text-white text-2xl font-semibold">Sign In</h2>
-                </div>
-                <form #myForm="ngForm" class="flex flex-col items-center" (ngSubmit)="onSubmit(myForm.value)">
-                    <div class="w-64 lg:w-56 bg-white flex items-center m-2 justify-center border-none rounded-md focus:ring-none focus:outline-none" tabindex="0">
-                        <input
-                            placeholder="Email Id"
-                            type="text"
-                            name="email"
-                            class="px-1 py-2 border-none bg-white text-gray-800 focus:outline-none focus:ring-none"
-                            [(ngModel)]="user.email"
-                        />
-                        <div class="flex items-center h-full px-1">
-                            <mat-icon class="text-gray-600">email</mat-icon>
-                        </div>
-                    </div>
-                    <div class="w-64 lg:w-56 m-2 bg-white flex items-center justify-center border-none rounded-md focus:ring-none focus:outline-none" tabindex="0">
-                        <input
-                            placeholder="Password"
-                            type="password"
-                            name="password"
-                            class="px-1 py-2 border-none bg-white text-gray-800 focus:outline-none focus:ring-none"
-                            [(ngModel)]="user.password"
-                        />
-                        <div class="flex items-center h-full px-1">
-                            <mat-icon class="text-gray-600">lock</mat-icon>
-                        </div>
-                    </div>
-                  <div class="flex items-center justify-center bg-black text-white cursor-pointer border-none outline-none w-56 font-semibold m-2 p-2 text-xl tracking-tight">
-                    <button type="submit" [disabled]="!myForm.valid" class="bg-slate-400 rounded-md text-black cursor-pointer border-none outline-none w-full p-2 font-semibold text-xl tracking-tight">
-                      SIGN IN
-                    </button>
-                  </div>
-                </form>
-            </div>
+
+    <p class="text-sm text-slate-400">&copy; Teststein</p>
+    <img src="/images/teststein-high-resolution-logo-transparent.png" alt="" aria-hidden="true"
+      class="pointer-events-none absolute -bottom-24 -right-24 h-96 w-auto opacity-[0.06] brightness-0 invert" />
+  </aside>
+
+  <!-- Form -->
+  <main class="flex flex-1 items-center justify-center px-6 py-12">
+    <div class="w-full max-w-sm">
+      <img src="/images/teststein-high-resolution-logo-transparent-name-side.png" alt="Teststein" class="mb-10 h-8 w-auto lg:hidden" />
+
+      <h2 class="text-2xl font-semibold tracking-tight text-slate-900">Sign in</h2>
+      <p class="mt-1 text-sm text-slate-500">Welcome back. Enter your details to continue.</p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-8 space-y-5" novalidate>
+        <div>
+          <label for="email" class="field-label">Email</label>
+          <input id="email" type="email" formControlName="email" autocomplete="email" placeholder="you@company.com"
+            class="field-input" [class.is-invalid]="showError('email')" />
+          @if (showError('email')) {
+            <p class="field-error">Enter a valid email address.</p>
+          }
         </div>
+
+        <div>
+          <label for="password" class="field-label">Password</label>
+          <div class="relative">
+            <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+              autocomplete="current-password" class="field-input pr-10" [class.is-invalid]="showError('password')" />
+            <button type="button" class="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-slate-400 hover:text-slate-700"
+              (click)="showPassword.set(!showPassword())" [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+              <mat-icon class="icon-18">{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          @if (showError('password')) {
+            <p class="field-error">Enter your password.</p>
+          }
+        </div>
+
+        @if (error()) {
+          <p class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ error() }}</p>
+        }
+
+        <button type="submit" class="btn btn-primary w-full">Sign in</button>
+      </form>
+
+      <p class="mt-6 text-center text-xs text-slate-400">Demo mode: any email and password will sign you in.</p>
     </div>
+  </main>
 </div>

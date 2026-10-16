@@ -1,60 +1,87 @@
-<div class="main-side-nav flex-none overflow-x-hidden whitespace-nowrap transition-all duration-[195ms] ease-[cubic-bezier(0.4,0,0.6,1)]">
-    <div class="fixed top-0 left-0 h-screen w-100 border-none bg-white shadow-none p-0 rounded-none box-border overflow-y-auto overflow-x-hidden whitespace-nowrap w-[7%] hover:w-[200px] transition-all duration-[195ms] ease-[cubic-bezier(0.4,0,0.6,1)] flex flex-col z-[1200] group">
-        <div class="sticky top-0 z-[1200] flex items-center justify-center bg-white h-[12%] px-0 text-[#030229] font-nunito text-base font-normal whitespace-nowrap max-h-[12%]">
-            <a href="/base" tabindex="0" class="flex items-center space-x-4 no-underline">
-              <img src="/images/teststein-high-resolution-logo-transparent.png" alt="logo" class="h-8 w-auto"/>
-              <!-- <h4 class="text-base font-normal">Base</h4> -->
-            </a>
-        </div>
-        <nav class="max-h-[88%] py-4 px-2 box-border overflow-y-auto overflow-x-hidden whitespace-nowrap w-full transition-all duration-[195ms] ease-[cubic-bezier(0.4,0,0.6,1)] flex flex-col">
-            <li class="list-none group-hover:pl-8 flex h-12 p-2 items-center justify-center group-hover:justify-start hover:bg-slate-100 hover:cursor-pointer hover:shadow-lg mb-2 rounded-lg">
-                <a class="no-underline flex items-center justify-center group-hover:justify-start">
-                    <mat-icon>dashboard</mat-icon>
-                    <h1 class="ml-2 hidden group-hover:inline-block">Dashboard</h1>
-                </a>
+<!-- Mobile backdrop -->
+@if (mobileOpen()) {
+  <div class="fixed inset-0 z-40 bg-slate-900/40 lg:hidden" (click)="closeMobile.emit()" aria-hidden="true"></div>
+}
+
+<aside
+  class="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-200 bg-white transition-all duration-200 lg:translate-x-0"
+  [ngClass]="[
+    mobileOpen() ? 'translate-x-0' : '-translate-x-full',
+    collapsed() ? 'lg:w-[72px]' : 'lg:w-64'
+  ]"
+  aria-label="Main navigation"
+>
+  <!-- Brand -->
+  <div class="flex h-16 shrink-0 items-center border-b border-slate-200 px-4" [ngClass]="collapsed() ? 'lg:justify-center lg:px-0' : ''">
+    <a routerLink="/dashboard" class="flex items-center" aria-label="Teststein home">
+      <img
+        src="/images/teststein-high-resolution-logo-transparent-name-side.png"
+        alt="Teststein"
+        class="h-7 w-auto"
+        [ngClass]="collapsed() ? 'lg:hidden' : ''"
+      />
+      <img
+        src="/images/teststein-high-resolution-logo-transparent.png"
+        alt=""
+        class="hidden h-8 w-auto"
+        [ngClass]="collapsed() ? 'lg:block' : ''"
+      />
+    </a>
+    <button type="button" class="btn-icon ml-auto lg:hidden" (click)="closeMobile.emit()" aria-label="Close menu">
+      <mat-icon class="icon-20">close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-1 overflow-y-auto px-3 py-4">
+    @for (section of sections; track section.title) {
+      <div class="mb-6">
+        <p
+          class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400"
+          [ngClass]="collapsed() ? 'lg:sr-only' : ''"
+        >{{ section.title }}</p>
+        <ul class="space-y-1">
+          @for (item of section.items; track item.path) {
+            <li>
+              <ng-container *ngTemplateOutlet="navLink; context: { $implicit: item }" />
             </li>
-            <li class="list-none group-hover:pl-8 flex h-12 p-2 items-center justify-center group-hover:justify-start hover:bg-slate-100 hover:cursor-pointer hover:shadow-lg mb-2 rounded-lg">
-                <a class="no-underline flex items-center justify-center group-hover:justify-start">
-                    <mat-icon>account_tree</mat-icon>
-                    <h1 class="ml-2 hidden group-hover:inline-block">Projects</h1>
-                </a>
-            </li>
-            <li class="list-none group-hover:pl-8 flex h-12 p-2 items-center justify-center group-hover:justify-start hover:bg-slate-100 hover:cursor-pointer hover:shadow-lg mb-2 rounded-lg">
-                <a class="no-underline flex items-center justify-center group-hover:justify-start">
-                    <mat-icon>edit_note</mat-icon>
-                    <h1 class="ml-2 hidden group-hover:inline-block">Test Cases</h1>
-                </a>
-            </li>
-            <li class="list-none group-hover:pl-8 flex h-12 p-2 items-center justify-center group-hover:justify-start hover:bg-slate-100 hover:cursor-pointer hover:shadow-lg mb-2 rounded-lg">
-                <a class="no-underline flex items-center justify-center group-hover:justify-start">
-                    <mat-icon>auto_mode</mat-icon>
-                    <h1 class="ml-2 hidden group-hover:inline-block">Test Runs</h1>
-                </a>
-            </li>
-            <li class="list-none group-hover:pl-8 flex h-12 p-2 items-center justify-center group-hover:justify-start hover:bg-slate-100 hover:cursor-pointer hover:shadow-lg mb-2 rounded-lg">
-                <a class="no-underline flex items-center justify-center group-hover:justify-start">
-                    <mat-icon>description</mat-icon>
-                    <h1 class="ml-2 hidden group-hover:inline-block">Reports</h1>
-                </a>
-            </li>
-            <li class="list-none group-hover:pl-8 flex h-12 p-2 items-center justify-center group-hover:justify-start hover:bg-slate-100 hover:cursor-pointer hover:shadow-lg mb-2 rounded-lg">
-                <a class="no-underline flex items-center justify-center group-hover:justify-start">
-                    <mat-icon>timeline</mat-icon>
-                    <h1 class="ml-2 hidden group-hover:inline-block">Analytics</h1>
-                </a>
-            </li>
-            <li class="list-none group-hover:pl-8 flex h-12 p-2 items-center justify-center group-hover:justify-start hover:bg-slate-100 hover:cursor-pointer hover:shadow-lg mb-2 rounded-lg">
-                <a class="no-underline flex items-center justify-center group-hover:justify-start">
-                    <mat-icon>settings</mat-icon>
-                    <h1 class="ml-2 hidden group-hover:inline-block">Settings</h1>
-                </a>
-            </li>
-            <li class="list-none group-hover:pl-8 flex h-12 p-2 items-center justify-center group-hover:justify-start hover:bg-slate-100 hover:cursor-pointer hover:shadow-lg mb-2 rounded-lg">
-                <a class="no-underline flex items-center justify-center group-hover:justify-start">
-                    <mat-icon>help</mat-icon>
-                    <h1 class="ml-2 hidden group-hover:inline-block">Help</h1>
-                </a>
-            </li>
-        </nav>
-    </div>
-</div>
+          }
+        </ul>
+      </div>
+    }
+  </nav>
+
+  <!-- Footer -->
+  <div class="border-t border-slate-200 px-3 py-3">
+    <ul class="space-y-1">
+      @for (item of footerItems; track item.path) {
+        <li>
+          <ng-container *ngTemplateOutlet="navLink; context: { $implicit: item }" />
+        </li>
+      }
+    </ul>
+    <button
+      type="button"
+      class="mt-2 hidden h-9 w-full items-center gap-3 rounded-lg px-3 text-sm text-slate-500 hover:bg-slate-100 hover:text-slate-900 lg:flex"
+      [ngClass]="collapsed() ? 'justify-center px-0' : ''"
+      (click)="toggleCollapsed.emit()"
+      [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+    >
+      <mat-icon class="icon-20">{{ collapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}</mat-icon>
+      @if (!collapsed()) { <span>Collapse</span> }
+    </button>
+  </div>
+</aside>
+
+<ng-template #navLink let-item>
+  <a
+    [routerLink]="item.path"
+    routerLinkActive="!bg-brand !text-brand-fg"
+    class="flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+    [ngClass]="collapsed() ? 'lg:justify-center lg:px-0' : ''"
+    [attr.title]="collapsed() ? item.label : null"
+  >
+    <mat-icon class="icon-20 shrink-0">{{ item.icon }}</mat-icon>
+    <span [ngClass]="collapsed() ? 'lg:sr-only' : ''">{{ item.label }}</span>
+  </a>
+</ng-template>
