@@ -1,0 +1,21 @@
+# Playwright Test (Node), split across 4 parallel shards.
+version: 1
+jobs:
+  e2e:
+    name: End-to-end
+    framework: playwright
+    runtime: node:20
+    command: npx playwright test --shard=$TESTSTEIN_SHARD/$TESTSTEIN_SHARD_TOTAL --reporter=junit
+    env:
+      PLAYWRIGHT_JUNIT_OUTPUT_NAME: teststein-results/junit.xml
+      BASE_URL: ${{ environment.base_url }}
+    artifacts:
+      - path: test-results/**/trace.zip
+        kind: trace
+        when: on_failure
+      - path: playwright-report/**
+        kind: report
+    shards: 4
+    triggers:
+      push:
+        branches: [main, release/*]

@@ -1,0 +1,17 @@
+# JavaScript + Appium (WebdriverIO client) under Mocha, on an Android emulator.
+version: 1
+jobs:
+  android-smoke:
+    name: Android smoke
+    framework: mocha
+    libraries: [appium]
+    runtime: node:20
+    command: npx mocha test/android --reporter mocha-junit-reporter --reporter-options mochaFile=teststein-results/junit.xml
+    services: [appium]
+    runs_on: [self-hosted, kvm]
+    android:
+      emulator:
+        api_level: 34
+        device: pixel_7
+      app: builds/app-release.apk
+    timeout: 45m

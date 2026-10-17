@@ -1,0 +1,8 @@
+version: 1
+jobs:
+  bad:
+    framework: mocha
+    libraries: [appium]
+    android:
+      emulator: { api_level: 34 }
+      device: android:device:pixel-7

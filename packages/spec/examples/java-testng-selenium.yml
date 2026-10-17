@@ -1,0 +1,21 @@
+# Java + Selenium with TestNG, built with Maven, on Firefox and Chrome jobs.
+version: 1
+jobs:
+  checkout-chrome:
+    name: Checkout (Chrome)
+    framework: testng
+    build_tool: maven
+    libraries: [selenium]
+    runtime: java:21
+    command: mvn -B test -Dbrowser=chrome -Dgrid.url=http://chrome:4444
+    services: [chrome]
+    results:
+      junit: target/surefire-reports/*.xml
+  checkout-firefox:
+    name: Checkout (Firefox)
+    framework: testng
+    build_tool: gradle
+    libraries: [selenium]
+    runtime: java:21
+    command: ./gradlew test -Dbrowser=firefox -Dgrid.url=http://firefox:4444
+    services: [firefox]

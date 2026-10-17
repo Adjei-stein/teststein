@@ -1,1 +1,19 @@
-test-case-management-system/test-case-management-system/node_modules/
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.angular/
+coverage/
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+*.log
+
+# TypeScript incremental build info
+*.tsbuildinfo

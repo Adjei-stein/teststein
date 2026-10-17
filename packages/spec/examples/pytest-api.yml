@@ -1,0 +1,10 @@
+# API functional tests written in code (pytest + requests). No browser needed.
+version: 1
+jobs:
+  api-contract:
+    framework: pytest
+    install: pip install -r requirements.txt
+    command: pytest tests/api --junitxml=teststein-results/junit.xml
+    env:
+      API_URL: ${{ environment.variables.API_URL }}
+      API_TOKEN: ${{ secrets.API_TOKEN }}

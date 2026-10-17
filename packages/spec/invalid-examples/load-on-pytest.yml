@@ -1,0 +1,5 @@
+version: 1
+jobs:
+  bad:
+    framework: pytest
+    load: { users: 10, duration: 1m }

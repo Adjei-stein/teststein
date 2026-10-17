@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Web app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @teststein/web
+
+  spec-and-schema:
+    name: teststein.yml spec & database schema
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm test -w @teststein/spec
+      - run: npm test -w @teststein/db
+
+  api:
+    name: API
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: teststein
+          POSTGRES_PASSWORD: teststein
+          POSTGRES_DB: teststein
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U teststein"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      MIGRATION_DATABASE_URL: postgres://teststein:teststein@localhost:5432/teststein
+      DATABASE_URL: postgres://teststein_app:teststein_app@localhost:5432/teststein
+      APP_DB_ROLE: teststein_app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Create the API database role
+        run: psql "$MIGRATION_DATABASE_URL" -v ON_ERROR_STOP=1 -f deploy/postgres/init.sql
+      - run: npm run db:migrate
+      - run: npm run lint -w @teststein/api
+      - run: npm run build -w @teststein/api
+      - run: npm test -w @teststein/api
+      - run: npm run test:e2e -w @teststein/api

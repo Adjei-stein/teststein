@@ -1,0 +1,24 @@
+{
+  "name": "teststein",
+  "private": true,
+  "description": "Open-source test management, remote test execution and API testing.",
+  "workspaces": [
+    "apps/web",
+    "apps/api",
+    "packages/*",
+    "db"
+  ],
+  "scripts": {
+    "web": "npm run start -w @teststein/web",
+    "api": "npm run start:dev -w @teststein/api",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "db:migrate": "npm run migrate -w @teststein/db"
+  },
+  "engines": {
+    "node": ">=24.9"
+  },
+  "overrides": {
+    "rxjs": "7.8.2"
+  }
+}

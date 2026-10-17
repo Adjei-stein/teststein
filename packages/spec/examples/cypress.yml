@@ -1,0 +1,10 @@
+version: 1
+jobs:
+  cypress:
+    framework: cypress
+    command: npx cypress run --reporter junit --reporter-options "mochaFile=teststein-results/junit-[hash].xml"
+    artifacts:
+      - path: cypress/videos/**
+        kind: video
+      - path: cypress/screenshots/**
+        kind: screenshot

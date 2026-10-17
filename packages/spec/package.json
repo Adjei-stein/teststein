@@ -1,0 +1,17 @@
+{
+  "name": "@teststein/spec",
+  "version": "0.1.0",
+  "private": true,
+  "description": "teststein.yml format: JSON Schema, reference docs and examples.",
+  "type": "module",
+  "exports": {
+    "./teststein.schema.json": "./teststein.schema.json"
+  },
+  "scripts": {
+    "test": "node scripts/validate.mjs"
+  },
+  "devDependencies": {
+    "ajv": "8.17.1",
+    "yaml": "2.6.1"
+  }
+}

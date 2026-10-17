@@ -1,0 +1,17 @@
+{
+  "name": "@teststein/db",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PostgreSQL migrations and schema tests.",
+  "type": "module",
+  "scripts": {
+    "migrate": "node --env-file-if-exists=../apps/api/.env scripts/migrate.mjs",
+    "test": "node test/schema.test.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.2.17"
+  },
+  "dependencies": {
+    "pg": "8.23.1"
+  }
+}

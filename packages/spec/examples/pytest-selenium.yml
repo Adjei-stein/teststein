@@ -1,0 +1,28 @@
+# Python + Selenium, run with pytest against a Chrome sidecar.
+version: 1
+jobs:
+  web-regression:
+    name: Web regression (Chrome)
+    framework: pytest
+    libraries: [selenium]
+    runtime: python:3.12
+    install: pip install -r requirements.txt
+    command: pytest tests/web --junitxml=teststein-results/junit.xml
+    services: [chrome]
+    environment: Staging
+    env:
+      BASE_URL: ${{ environment.base_url }}
+      SELENIUM_REMOTE_URL: http://chrome:4444/wd/hub
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+    artifacts:
+      - path: screenshots/**
+        kind: screenshot
+        when: on_failure
+    timeout: 30m
+    retries: 1
+    triggers:
+      pull_request:
+        branches: [main]
+      schedule:
+        - cron: "0 2 * * *"
+          timezone: Europe/London

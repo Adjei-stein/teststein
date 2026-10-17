@@ -1,5 +1,5 @@
 -- =============================================================================
--- Teststein — database schema, phases 0–2
+-- Teststein — migration 001: core schema (phases 0–2)
 --   Phase 0: identity, organisations, projects, environments, secrets
 --   Phase 1: test library (suites, cases, versions), script sources
 --   Phase 2: runners, job definitions, schedules, runs, executions, results
@@ -362,13 +362,17 @@ create table job_definitions (
   id           uuid primary key default gen_random_uuid(),
   org_id       uuid not null,
   project_id   uuid not null,
-  source_id    uuid not null,
+  -- What it runs: a script source, or (framework 'api') a built-in API collection.
+  source_id          uuid,
+  api_collection_id  uuid,                        -- foreign key added in 002_api_testing.sql
   name         text not null,
   -- The test runner. Playwright/Selenium/Appium in Python run under pytest, in Java
   -- under junit5/testng; 'playwright' here means the Playwright Test runner (Node).
+  -- 'api' is Teststein's built-in API collection runner.
   framework    text not null check (framework in
-               ('pytest', 'mocha', 'playwright', 'cypress', 'junit5', 'testng', 'locust')),
+               ('pytest', 'mocha', 'playwright', 'cypress', 'junit5', 'testng', 'locust', 'api')),
   language     text generated always as (case
+                 when framework = 'api' then null
                  when framework in ('pytest', 'locust') then 'python'
                  when framework in ('junit5', 'testng') then 'java'
                  else 'javascript' end) stored,
@@ -376,9 +380,11 @@ create table job_definitions (
   -- Libraries layered on top of the runner; select runner images and services.
   libraries    text[] not null default '{}'       -- e.g. {selenium}, {appium}, {playwright}
                check (libraries <@ array['selenium', 'appium', 'playwright']),
-  config_path  text,                              -- e.g. 'teststein.yml' inside the source
-  -- { image, install, command, services[], results{junit}, artifacts[], env{},
-  --   timeout, shards, retries, load{users,spawn_rate,duration,workers}, thresholds{} }
+  -- Where the job came from when defined in a teststein.yml: the file and the key under `jobs:`.
+  -- Null for jobs created in the UI, where `config` is the source of truth.
+  config_path  text,
+  config_job   text,
+  -- The job's settings from teststein.yml (see packages/spec/teststein-yml.md), stored as JSON.
   config       jsonb not null default '{}',
   runs_on      text[] not null default '{}',      -- required runner labels
   created_by   uuid references users (id) on delete set null,
@@ -389,13 +395,23 @@ create table job_definitions (
   unique (project_id, name),
   foreign key (org_id, project_id) references projects (org_id, id) on delete cascade,
   foreign key (org_id, source_id) references script_sources (org_id, id),
-  -- Java needs Maven or Gradle; Python and Node default to pip / npm when null.
-  check (
-    (language = 'java'       and coalesce(build_tool, '') in ('maven', 'gradle'))
-    or (language = 'python'     and coalesce(build_tool, 'pip') = 'pip')
-    or (language = 'javascript' and coalesce(build_tool, 'npm') = 'npm')
-  )
+  constraint job_definitions_target_check check (
+    (framework = 'api' and api_collection_id is not null and source_id is null)
+    or (framework <> 'api' and api_collection_id is null and source_id is not null)
+  ),
+  -- Java needs Maven or Gradle; Python and Node default to pip / npm when null; API has none.
+  -- (coalesce on language because a NULL check result would count as passing.)
+  constraint job_definitions_toolchain_check check (
+    (framework = 'api' and build_tool is null)
+    or (coalesce(language, '') = 'java'       and coalesce(build_tool, '') in ('maven', 'gradle'))
+    or (coalesce(language, '') = 'python'     and coalesce(build_tool, 'pip') = 'pip')
+    or (coalesce(language, '') = 'javascript' and coalesce(build_tool, 'npm') = 'npm')
+  ),
+  check ((config_path is null) = (config_job is null))
 );
+-- One row per job in a given teststein.yml; repo syncs upsert on this key.
+create unique index job_definitions_config_key on job_definitions (source_id, config_path, config_job)
+  where config_path is not null;
 
 -- Maps automated test names (as reported in JUnit XML) to library test cases, so an
 -- automated result updates the case it covers.

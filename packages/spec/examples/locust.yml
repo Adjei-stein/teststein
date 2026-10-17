@@ -1,0 +1,18 @@
+# Load test: 500 users for 10 minutes across 4 workers, failing on slow p95 or errors.
+version: 1
+jobs:
+  checkout-load:
+    name: Checkout load test
+    framework: locust
+    runtime: python:3.12
+    install: pip install -r requirements.txt
+    load:
+      locustfile: load/checkout.py
+      users: 500
+      spawn_rate: 25
+      duration: 10m
+      workers: 4
+    thresholds:
+      p95_ms: 300
+      max_error_rate: 0.01
+    environment: Staging
